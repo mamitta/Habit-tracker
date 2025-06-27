@@ -1,0 +1,10 @@
+Expo docs for splash screens and icons 
+Add (if deemed fit) commented props on layout.tsx
+Find "the other way" to render stacks from expo docs
+The padding between the header and screen content
+spacing between the wins tabs
+change all the screen headings
+Get rid of multiple primary buttons
+
+zustand persist
+Reddit post on meat eater calendar
