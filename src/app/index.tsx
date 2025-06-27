@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { winCategories } from '../data/win-categories';
-import { Button } from '../components/Button';
+
 
 const WelcomeScreen: React.FC = () => {
 
-  // Handle category press - navigate to category detail screen
+  // Handle category press - navigate to the habits screen
   const handleCategoryPress = (category: any) => {
     router.push({
       pathname: '/habits',
@@ -18,15 +18,15 @@ const WelcomeScreen: React.FC = () => {
     });
   };
 
-  // Get current date and generate 7-day calendar
+  // Get the date today and generate 7-day calendar
   const today = new Date();
-  const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  const currentDay = today.getDay(); 
   
   const generateWeekDays = () => {
     const days = [];
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     
-    // Start from Sunday of current week
+    // Start from sunday because it be first?
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - currentDay);
     
@@ -55,7 +55,7 @@ const WelcomeScreen: React.FC = () => {
           Welcome
         </Text>
 
-        {/* 7-Day Calendar */}
+        {/*Calendar */}
         <View className="mb-8">
           <View className="flex-row justify-between px-2">
             {weekDays.map((day, index) => (
@@ -86,7 +86,7 @@ const WelcomeScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Win Categories Tabs */}
+        {/* Win Categories  */}
         <View className="space-y-3">
           <Text className="text-lg font-bold text-gray-700 mb-4">
             Daily Routine
@@ -115,7 +115,6 @@ const WelcomeScreen: React.FC = () => {
                   Add your {category.title.toLowerCase()} achievements here
                 </Text>
 
-                {/* Optional: Add arrow or indicator */}
                 <View className="flex-row justify-end mt-2">
                   <Text className="text-gray-400 text-lg">→</Text>
                 </View>

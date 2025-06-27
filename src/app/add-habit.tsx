@@ -1,4 +1,3 @@
-// Example: How to use in your Add-Habit screen
 import React, { useState } from 'react';
 import { View, Text, TextInput, Alert } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';

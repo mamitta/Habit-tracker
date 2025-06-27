@@ -1,4 +1,3 @@
-// stores/habitStore.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +15,7 @@ export interface Habit {
 interface HabitStore {
   habits: Habit[];
   loading: boolean;
+  hydrated: boolean;
   
   // Actions
   addHabit: (habit: Omit<Habit, 'id' | 'createdAt'>) => void;
@@ -36,6 +36,7 @@ export const useHabitStore = create<HabitStore>()(
     (set, get) => ({
       habits: [],
       loading: false,
+      hydrated: false, //middleware was failing at updating habit...STILL DONT WORK FOR
 
       // Add a new habit
       addHabit: (habitData) => {
@@ -148,3 +149,5 @@ export const useHabitStore = create<HabitStore>()(
     }
   )
 );
+
+//REMINDER: what does not kill me just almost makes me stronger. damn

@@ -15,7 +15,7 @@ const CategoryDetailScreen: React.FC = () => {
   const params = useLocalSearchParams();
   const { categoryId, categoryTitle, categoryColor, categoryBgColor } = params;
   
-  // Zustand store hooks
+  // Zustand store hooks... Try hydration for persistence..
   const { 
     getHabitsByCategory, 
     toggleHabitCompletion, 
@@ -23,11 +23,13 @@ const CategoryDetailScreen: React.FC = () => {
     getCategoryProgress 
   } = useHabitStore();
 
-  // Get habits for current category
+  
+
+  // Getting habits for current the category
   const categoryHabits = getHabitsByCategory(categoryId as string);
   const progress = getCategoryProgress(categoryId as string);
 
-  // Navigate to add habit screen with category context
+  // Navigate to add habit screen with the category details
   const handleAddHabit = () => {
     router.push({
       pathname: '/add-habit',
@@ -87,17 +89,18 @@ const CategoryDetailScreen: React.FC = () => {
         </TouchableOpacity>
         
         <View className="flex-row items-center space-x-3">
+
           {/* Completion checkbox */}
           <TouchableOpacity
             onPress={() => toggleHabitCompletion(item.id)}
             className={`w-8 h-8 rounded-full border-2 items-center justify-center ${
               item.completed 
-                ? `${categoryColor?.toString().replace('text-', 'bg-')} border-transparent`
+                ? `${categoryColor?.toString().replace('text-', 'bg-')} border-gray-400`
                 : 'border-gray-400'
             }`}
           >
             {item.completed && (
-              <Text className="text-white text-sm font-bold">✓</Text>
+              <Text className="text-gray text-sm font-bold">✓</Text>
             )}
           </TouchableOpacity>
           
@@ -117,8 +120,7 @@ const CategoryDetailScreen: React.FC = () => {
     <View className="flex-1 bg-gray-50">
       <ScrollView className="flex-1">
         <View className="px-6 pt-16 pb-8">
-        
-         {/* Category Title */}
+    
           <Text className="text-3xl font-bold text-gray-800 mb-2">
             {categoryTitle} Wins
           </Text>
@@ -162,7 +164,8 @@ const CategoryDetailScreen: React.FC = () => {
                 {progress.total} {progress.total === 1 ? 'habit' : 'habits'}
               </Text>
             </View>
-            
+
+            {/* When habits creation is fresh and there are no habits yet*/}
             {categoryHabits.length === 0 ? (
               <View className="items-center py-12 px-4">
                 <View 
@@ -177,6 +180,7 @@ const CategoryDetailScreen: React.FC = () => {
                   Add your first habit to start tracking your wins!
                 </Text>
               </View>
+                
             ) : (
               <FlatList
                 data={categoryHabits}
@@ -216,3 +220,5 @@ const CategoryDetailScreen: React.FC = () => {
 };
 
 export default CategoryDetailScreen;
+
+//TODO: Deal with zustand persistence before any more progression.
