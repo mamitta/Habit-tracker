@@ -91,13 +91,14 @@ const WelcomeScreen: React.FC = () => {
           <Text className="text-lg font-bold text-gray-700 mb-4">
             Daily Routine
           </Text>
+
          
-          <View className="flex-col space-y-6">
+          <View className="flex-col space-y-6 ">
             {winCategories.map((category) => (
               <TouchableOpacity
                 key={category.id}
                 onPress={() => handleCategoryPress(category)}
-                className={`p-4 rounded-xl border-2 ${category.bgColor} border-current ${category.color}`}
+                className={`p-2 mb-4 rounded-xl border-2 ${category.bgColor} border-current ${category.color}`}
                 activeOpacity={0.7}
               >
                 <View className="flex-row items-center mb-2 justify-between">
@@ -106,9 +107,6 @@ const WelcomeScreen: React.FC = () => {
                   >
                     {category.title} Wins
                   </Text>
-                  <View 
-                    className={`w-6 h-6 rounded-full ${ category.color.replace('text-', 'bg-')}`}
-                  />
                 </View>
                 
                 <Text className="text-sm text-gray-600 mt-2">

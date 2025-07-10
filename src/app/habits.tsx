@@ -10,12 +10,59 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { Button } from '../components/Button';
 import { useHabitStore } from '../../store/habit-store';
+import { HabitFrequency} from '../components/frequency-picker';
+
+
+// Function to check if a habit is due today
+const isHabitDueToday = (frequency: HabitFrequency, lastCompleted?: Date): boolean => {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+  switch (frequency.type) {
+    case 'daily':
+      return true; // Daily habits are always due
+
+    case 'weekly':
+      if (!frequency.days || frequency.days.length === 0) {
+        return false;
+      }
+      // Check if today is one of the selected days
+      return frequency.days.includes(dayOfWeek);
+
+    case 'custom':
+      if (!frequency.interval || !lastCompleted) {
+        return true; // If no last completed date, assume it's due
+      }
+      
+      // Calculate days since last completion
+      const timeDiff = today.getTime() - lastCompleted.getTime();
+      const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      
+      // Check if enough days have passed based on the interval
+      return daysDiff >= frequency.interval;
+
+    default:
+      return true;
+  }
+};
+
+// Function to filter habits that are due today
+const getHabitsDueToday = (habits: any[]): any[] => {
+  return habits.filter(habit => {
+    if (!habit.frequency) {
+      return true; // If no frequency is set, show the habit (for backward compatibility)
+    }
+    
+    return isHabitDueToday(habit.frequency, habit.lastCompleted);
+  });
+};
+
 
 const CategoryDetailScreen: React.FC = () => {
   const params = useLocalSearchParams();
   const { categoryId, categoryTitle, categoryColor, categoryBgColor } = params;
   
-  // Zustand store hooks... Try hydration for persistence..
+  // Zustand store hooks...
   const { 
     getHabitsByCategory, 
     toggleHabitCompletion, 
@@ -27,6 +74,7 @@ const CategoryDetailScreen: React.FC = () => {
 
   // Getting habits for current the category
   const categoryHabits = getHabitsByCategory(categoryId as string);
+  const dueHabits = getHabitsDueToday(categoryHabits);
   const progress = getCategoryProgress(categoryId as string);
 
   // Navigate to add habit screen with the category details
@@ -89,6 +137,8 @@ const CategoryDetailScreen: React.FC = () => {
         </TouchableOpacity>
         
         <View className="flex-row items-center space-x-3">
+
+          
 
           {/* Completion checkbox */}
           <TouchableOpacity
@@ -158,32 +208,33 @@ const CategoryDetailScreen: React.FC = () => {
           <View className="mb-6">
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-lg font-bold text-gray-700">
-                Your Habits
+                Habits Due Today
               </Text>
               <Text className="text-sm text-gray-500">
-                {progress.total} {progress.total === 1 ? 'habit' : 'habits'}
+                {dueHabits.length} {dueHabits.length === 1 ? 'habit' : 'habits'}
+                {categoryHabits.length !== dueHabits.length && (
+                  <Text className="text-xs text-gray-400">
+                    {' '}({categoryHabits.length - dueHabits.length} not due)
+                  </Text>
+                )}
               </Text>
             </View>
+
 
             {/* When habits creation is fresh and there are no habits yet*/}
             {categoryHabits.length === 0 ? (
               <View className="items-center py-12 px-4">
-                <View 
-                  className={`w-16 h-16 rounded-full mb-4 items-center justify-center ${categoryBgColor}`}
-                >
-                  <Text className={`text-2xl ${categoryColor}`}>+</Text>
-                </View>
+                
                 <Text className="text-gray-500 text-lg mb-2 text-center">
-                  No {categoryTitle?.toString().toLowerCase()} habits yet
-                </Text>
-                <Text className="text-gray-400 text-center">
+                  No {categoryTitle?.toString().toLowerCase()} habits yet. 
                   Add your first habit to start tracking your wins!
                 </Text>
+                
               </View>
                 
             ) : (
               <FlatList
-                data={categoryHabits}
+                data={dueHabits}
                 renderItem={renderHabitItem}
                 keyExtractor={(item) => item.id}
                 scrollEnabled={false}
@@ -192,27 +243,30 @@ const CategoryDetailScreen: React.FC = () => {
             )}
           </View>
 
-          {/* Add Habit Button */}
-          <Button
-            title={`Add ${categoryTitle} Habit`}
-            onPress={handleAddHabit}
-            className="mb-4"
-          />
-
-          {/* Motivational Section */}
+            {/* Motivational Section */}
           {progress.total > 0 && (
-            <View className={`mt-6 p-4 rounded-xl border-2 ${categoryBgColor} border-current`}>
+            <View className={`mt-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm${categoryBgColor} border-current`}>
               <Text className={`text-lg font-semibold mb-2 ${categoryColor}`}>
                 {progress.percentage === 100 ? 'Perfect! ' : 'Keep it up!'}
               </Text>
               <Text className="text-gray-600">
                 {progress.percentage === 100
-                  ? "Amazing! You've completed all your habits today!"
+                  ? "You've completed all your habits today!"
                   : `You're ${progress.percentage}% there! ${progress.total - progress.completed} more to go.`
                 }
               </Text>
             </View>
           )}
+
+          {/* Add Habit Button */}
+          <Button
+            title={`Add ${categoryTitle} Habit`}
+            onPress={handleAddHabit}
+            className="mb-4 mt-8"
+          />
+
+        
+          
         </View>
       </ScrollView>
     </View>
@@ -221,4 +275,3 @@ const CategoryDetailScreen: React.FC = () => {
 
 export default CategoryDetailScreen;
 
-//TODO: Deal with zustand persistence before any more progression.

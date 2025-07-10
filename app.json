@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Tracker",
+    "icon": "./assets/adaptive-icon.png",
     "slug": "Tracker",
     "version": "1.0.0",
     "scheme": "Tracker",
@@ -8,8 +9,16 @@
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/favicon.png"
+      
     },
     "plugins": [
+      [
+      "expo-splash-screen", {
+      "image": "./assets/splashlight.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+      }
+    ],
       "expo-router",
       [
         "expo-dev-launcher",
@@ -24,12 +33,10 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+   
+    "userInterfaceStyle": "light"
+
+    
     },
     "assetBundlePatterns": [
       "**/*"
@@ -55,4 +62,4 @@
       }
     }
   }
-}
+
